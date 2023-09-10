@@ -34,29 +34,36 @@
 
 <script>
 export default {
-    props:{
-        cartItems:Array
+  props: {
+    cartItems: Array,
+    products: Array, // Tambahkan prop products
+  },
+  computed: {
+    total() {
+      return this.cartItems.reduce((total, item) => total + item.product.price * item.quantity, 0);
     },
-    computed:{
-        total(){
-            return this.cartItems.reduce((total, item) => total + item.product.price * item.quantity, 0);
-        }
+  },
+  methods: {
+    deleteItem(index) {
+      const deletedItem = this.cartItems[index];
+      this.cartItems.splice(index, 1);
+
+      // Kembalikan jumlah quantity ke stok produk
+      const product = deletedItem.product;
+      const productIndex = this.products.findIndex((p) => p === product);
+      if (productIndex !== -1) {
+        this.products[productIndex].stock += deletedItem.quantity;
+      }
     },
-    methods:{
-        deleteItem(index){
-            this.cartItems.splice(index, 1);
-        },
-        checkout(){
-            const total = this.cartItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+    checkout() {
+      const total = this.cartItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
 
-            if (total != 0){
-                alert(`Silahkan membayar Rp${total}`); 
-            }else{
-                alert('Anda belum memilih produk');
-            }
-            
-        }
-    }
-}
-
+      if (total != 0) {
+        alert(`Silahkan membayar Rp${total}`);
+      } else {
+        alert('Anda belum memilih produk');
+      }
+    },
+  },
+};
 </script>
